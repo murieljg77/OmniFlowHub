@@ -1,53 +1,59 @@
 ﻿using Amazon.S3;
 using Amazon.S3.Model;
 using Microsoft.Extensions.Configuration;
+using OmniFlowHub.Application.Interfaces;
 
-namespace OmniFlowHub.Infrastructure.Services;
-
-public class S3StorageService
+namespace OmniFlowHub.Infrastructure.Services
 {
-    private readonly IAmazonS3 _s3Client;
-    private readonly string _bucketName;
-
-    public S3StorageService(IConfiguration configuration)
+    public class S3StorageService : IStorageService
     {
-        var awsOptions = configuration.GetSection("AWS");
-        var serviceUrl = awsOptions["ServiceURL"]; //Para LocalStack (ej.: http://localhost:4566)
-        var accessKey = awsOptions["AccessKey"] ?? "test";
-        var secretKey = awsOptions["SecretKey"] ?? "test";
-        _bucketName = awsOptions["BucketName"] ?? "omniflowhub-bucket";
+        private readonly IAmazonS3 _s3Client;
+        private readonly string _bucketName;
 
-        var config = new AmazonS3Config();
-
-        //Si estamos usando LocalStack, configuramos el ServiceURL y desactivamos la validación de región estricta
-        if (!string.IsNullOrEmpty(serviceUrl))
+        public S3StorageService(IAmazonS3 s3Client, IConfiguration configuration)
         {
-            config.ServiceURL = serviceUrl;
-            config.ForcePathStyle = true; //Para LocalStack/ S3 compatible
+            _s3Client = s3Client;
+            _bucketName = configuration["AWS:BucketName"] ?? throw new ArgumentNullException("AWS:BucketName is not configured.");
         }
 
-        _s3Client = new AmazonS3Client(accessKey, secretKey, config);
-    }
-
-    public async Task<bool> UploadFileAsync(string fileName, Stream fileStream, string contentType)
-    {
-        try
+        public async Task<string> UploadFileAsync(Stream fileStream, string fileName, string contentType, CancellationToken cancellationToken = default)
         {
+            var s3Key = $"documents/{Guid.NewGuid()}_{fileName}";
+
             var putRequest = new PutObjectRequest
             {
                 BucketName = _bucketName,
-                Key = fileName,
+                Key = s3Key,
                 InputStream = fileStream,
                 ContentType = contentType
             };
 
-            var response = await _s3Client.PutObjectAsync(putRequest);
-            return response.HttpStatusCode == System.Net.HttpStatusCode.OK;
+            await _s3Client.PutObjectAsync(putRequest, cancellationToken);
+
+            return s3Key;
         }
-        catch (Exception)
+
+        public async Task<Stream> DownloadFileAsync(string s3Key, CancellationToken cancellationToken = default)
         {
-            //Aquí integrar un logger o retornar un Result Pattern
-            return false;
+            var request = new GetObjectRequest
+            {
+                BucketName = _bucketName,
+                Key = s3Key
+            };
+
+            var response = await _s3Client.GetObjectAsync(request, cancellationToken);
+            return response.ResponseStream;
+        }
+
+        public async Task DeleteFileAsync(string s3Key, CancellationToken cancellationToken = default)
+        {
+            var deleteRequest = new DeleteObjectRequest
+            {
+                BucketName = _bucketName,
+                Key = s3Key
+            };
+
+            await _s3Client.DeleteObjectAsync(deleteRequest, cancellationToken);
         }
     }
 }
