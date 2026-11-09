@@ -1,0 +1,7 @@
+<Solution>
+  <Project Path="OmniFlowHub.Api/OmniFlowHub.Api.csproj" />
+  <Project Path="OmniFlowHub.Application/OmniFlowHub.Application.csproj" />
+  <Project Path="OmniFlowHub.Domain/OmniFlowHub.Domain.csproj" />
+  <Project Path="OmniFlowHub.Infrastructure/OmniFlowHub.Infrastructure.csproj" />
+  <Project Path="OmniFlowHub.Worker/OmniFlowHub.Worker.csproj" />
+</Solution>

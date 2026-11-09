@@ -1,0 +1,18 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Worker">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>dotnet-OmniFlowHub.Worker-7d12f901-0113-4b2a-91af-f482c48f61b2</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="10.0.14" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\OmniFlowHub.Application\OmniFlowHub.Application.csproj" />
+    <ProjectReference Include="..\OmniFlowHub.Infrastructure\OmniFlowHub.Infrastructure.csproj" />
+  </ItemGroup>
+</Project>

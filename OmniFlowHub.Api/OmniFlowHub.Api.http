@@ -1,0 +1,6 @@
+@OmniFlowHub.Api_HostAddress = http://localhost:5180
+
+GET {{OmniFlowHub.Api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
