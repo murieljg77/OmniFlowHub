@@ -6,7 +6,7 @@ namespace OmniFlowHub.Domain.Interfaces
     {
         Task<Guid> AddAsync(DocumentItem document);
         Task<DocumentItem?> GetByIdAsync(Guid id);
-        Task<IEnumerable<DocumentItem>> GetPendingDocumentsAsync(int limit);
-        Task UpdateStatusAsync(DocumentItem document);
+        Task<IEnumerable<DocumentItem>> GetPendingDocumentsAsync(int limit, CancellationToken cancellationToken = default);
+        Task UpdateStatusAsync(DocumentItem document, CancellationToken cancellationToken = default);
     }
 }

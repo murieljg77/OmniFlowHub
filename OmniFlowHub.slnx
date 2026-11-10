@@ -3,5 +3,6 @@
   <Project Path="OmniFlowHub.Application/OmniFlowHub.Application.csproj" />
   <Project Path="OmniFlowHub.Domain/OmniFlowHub.Domain.csproj" />
   <Project Path="OmniFlowHub.Infrastructure/OmniFlowHub.Infrastructure.csproj" />
+  <Project Path="OmniFlowHub.UnitTests/OmniFlowHub.UnitTests.csproj" />
   <Project Path="OmniFlowHub.Worker/OmniFlowHub.Worker.csproj" />
 </Solution>

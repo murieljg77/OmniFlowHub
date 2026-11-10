@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using OmniFlowHub.Application.Interfaces;
+using OmniFlowHub.Application.Services;
 using OmniFlowHub.Domain.Interfaces;
 using OmniFlowHub.Infrastructure.Persistence;
 using OmniFlowHub.Infrastructure.Repositories;
@@ -22,6 +23,7 @@ namespace OmniFlowHub.Infrastructure
 
             //3. Registrar el servicio de almacenamiento LocalStack/S3
             services.AddScoped<IStorageService, S3StorageService>();
+            services.AddScoped<IDocumentProcessingService, DocumentProcessingService>();
 
             //4. Registrar el cliente de Amazon S3
             services.AddSingleton<IAmazonS3>(sp =>

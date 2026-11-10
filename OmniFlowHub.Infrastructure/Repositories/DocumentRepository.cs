@@ -54,7 +54,7 @@ namespace OmniFlowHub.Infrastructure.Repositories
             return MapToDomain(dto);
         }
 
-        public async Task<IEnumerable<DocumentItem>> GetPendingDocumentsAsync(int limit)
+        public async Task<IEnumerable<DocumentItem>> GetPendingDocumentsAsync(int limit, CancellationToken cancellationToken = default)
         {
             using var connection = _connectionFactory.CreateConnection();
 
@@ -64,14 +64,14 @@ namespace OmniFlowHub.Infrastructure.Repositories
             return dtos.Select(MapToDomain);
         }
 
-        public async Task UpdateStatusAsync(DocumentItem document)
+        public async Task UpdateStatusAsync(DocumentItem document, CancellationToken cancellationToken = default)
         {
             using var connection = _connectionFactory.CreateConnection();
 
             const string sql = @"
-            UPDATE Documents 
-            SET Status = @Status, ProcessedAt = @ProcessedAt, ErrorMessage = @ErrorMessage
-            WHERE Id = @Id;";
+                UPDATE Documents 
+                SET Status = @Status, ProcessedAt = @ProcessedAt, ErrorMessage = @ErrorMessage
+                WHERE Id = @Id;";
 
             await connection.ExecuteAsync(sql, new
             {
@@ -84,8 +84,16 @@ namespace OmniFlowHub.Infrastructure.Repositories
 
         private static DocumentItem MapToDomain(DocumentDto dto)
         {
-            var document = new DocumentItem(dto.FileName, dto.ContentType, dto.S3Key);
-            return document;
+            return new DocumentItem(
+                dto.Id,
+                dto.FileName,
+                dto.ContentType,
+                dto.S3Key,
+                (DocumentStatus)dto.Status,
+                dto.CreatedAt,
+                dto.ProcessedAt,
+                dto.ErrorMessage
+            );
         }
     }
 }
